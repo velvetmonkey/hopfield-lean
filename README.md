@@ -110,6 +110,10 @@ Zenodo DOI forthcoming.
 - [gradient-descent-lean](https://github.com/velvetmonkey/gradient-descent-lean) — Lean 4 gradient descent convergence. Zenodo: https://doi.org/10.5281/zenodo.20472996
 - [flywheel-universe](https://zenodo.org/doi/10.5281/zenodo.20469680) — Budgeted Hebbian Kuramoto dynamics companion paper
 
+## Acknowledgements
+
+Proofs in this library were generated using [Aristotle](https://aristotle.harmonic.fun), an AI proof assistant for Lean 4 and Mathlib. The proof discipline -- zero sorry, every Mathlib lemma name `#check`ed before use -- was specified by the author and enforced by the Lean type checker.
+
 ## Author
 
 Ben Cassie · [@thevelvetmonke](https://x.com/thevelvetmonke)
