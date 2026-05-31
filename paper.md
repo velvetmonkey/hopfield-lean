@@ -21,14 +21,12 @@ The library is part of a broader programme of Lean 4 formalisation for learning 
 
 The project is organised into five Lean modules plus a root import file:
 
-| Module | Role |
-|---|---|
-| `Hopfield/Defs.lean` | Core definitions: valid states, energy, local field, asynchronous update, single-unit flip, fixed point, and state encoding |
-| `Hopfield/ValidState.lean` | Arithmetic and update lemmas for `{±1}` states |
-| `Hopfield/Energy.lean` | Linear and quadratic energy-difference identities; energy descent and strict descent |
-| `Hopfield/FixedPoint.lean` | Energy change under a flip and fixed-point characterisation |
-| `Hopfield/Convergence.lean` | Finite-state convergence: no infinite sequence of non-trivial asynchronous updates |
-| `Hopfield.lean` | Root module importing the library |
+- `Hopfield/Defs.lean` defines valid states, energy, local fields, asynchronous updates, single-unit flips, fixed points, and state encodings.
+- `Hopfield/ValidState.lean` proves arithmetic and update lemmas for `{±1}` states.
+- `Hopfield/Energy.lean` proves linear and quadratic energy-difference identities, then derives energy descent and strict descent.
+- `Hopfield/FixedPoint.lean` proves the energy change under a flip and the fixed-point characterisation.
+- `Hopfield/Convergence.lean` proves finite-state convergence: there is no infinite sequence of non-trivial asynchronous updates.
+- `Hopfield.lean` is the root module importing the library.
 
 The project depends on:
 

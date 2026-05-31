@@ -4,6 +4,7 @@
 [![Mathlib](https://img.shields.io/badge/Mathlib-v4.28.0-purple)](https://github.com/leanprover-community/mathlib4)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Proofs](https://img.shields.io/badge/proofs-3%20theorems%20%2F%200%20sorry-brightgreen)](Hopfield)
+[![Paper](https://img.shields.io/badge/Zenodo-20474169-blue)](https://zenodo.org/records/20474169)
 
 Lean 4 formal proofs of Hopfield network energy descent and attractor convergence.
 
@@ -92,11 +93,13 @@ import Hopfield.Defs         -- core definitions
 
 ## Paper
 
-Companion paper forthcoming. To be published on Zenodo.
+**hopfield-lean: Formal Proofs of Hopfield Network Energy Descent and Attractor Convergence in Lean 4**  
+Ben Cassie (2026). Zenodo.  
+https://zenodo.org/records/20474169
 
 ## Cite
 
-Zenodo DOI forthcoming.
+Cassie, B. (2026). *hopfield-lean: Formal Proofs of Hopfield Network Energy Descent and Attractor Convergence in Lean 4*. Zenodo. https://zenodo.org/records/20474169.
 
 ## Related work
 
