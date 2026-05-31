@@ -3,11 +3,11 @@
 [![Lean 4](https://img.shields.io/badge/Lean-4.28.0-blue)](https://lean-lang.org/)
 [![Mathlib](https://img.shields.io/badge/Mathlib-v4.28.0-purple)](https://github.com/leanprover-community/mathlib4)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Proofs](https://img.shields.io/badge/proofs-pending-lightgrey)](Hopfield)
+[![Proofs](https://img.shields.io/badge/proofs-3%20theorems%20%2F%200%20sorry-brightgreen)](Hopfield)
 
 Lean 4 formal proofs of Hopfield network energy descent and attractor convergence.
 
-**Zero sorry statements.** Discrete Hopfield networks over arbitrary finite state spaces.
+**Zero sorry statements.** Discrete Hopfield networks over finite state spaces.
 
 ## Why it matters
 
@@ -15,59 +15,52 @@ Hopfield networks are among the oldest and most studied models of associative me
 
 This result is well-known but rarely stated with full precision: symmetry hypotheses, zero-diagonal constraints, update rule side conditions, and the finite-descent argument all hide details that matter when building on top of them. This library machine-checks every step in Lean 4, giving a verified proof spine importable by future work on attractor networks, memory models, and AI safety.
 
-The convergence proof uses no ODE machinery -- the finite state space argument closes it directly. This makes hopfield-lean one of the most self-contained libraries in the series.
+The convergence proof uses no ODE or LaSalle machinery -- it encodes valid states as `Fin N → Bool` and applies the pigeonhole principle: ℕ cannot inject into a finite type, so strict energy decrease implies termination.
 
-## Relationship to kuramoto-lean and gradient-descent-lean
-
-This library is part of a programme of AI-assisted Lean 4 formalisation of dynamical systems mathematics:
-
-- [kuramoto-lean](https://github.com/velvetmonkey/kuramoto-lean) -- Kuramoto synchronisation, gradient identities, Lyapunov descent
-- [gradient-descent-lean](https://github.com/velvetmonkey/gradient-descent-lean) -- O(1/k) and geometric convergence for smooth convex optimisation
-- **hopfield-lean** -- Hopfield energy descent and attractor convergence (this repo)
-
-All three share the same proof discipline: zero sorry, zero admit, no project-specific axioms, every Mathlib lemma name `#check`ed before use.
-
-## Planned project structure
+## Project structure
 
 ```
 Hopfield/
-├── Defs.lean         — State space, weight matrix, energy function, async update rule
-├── Descent.lean      — Single-unit flip decreases or maintains energy
-├── FixedPoints.lean  — Fixed point iff no flip decreases energy
-└── Convergence.lean  — Asynchronous updates reach a fixed point in finite steps
+├── Defs.lean         — ValidState, energy, localField, asyncUpdate, flipUnit, IsFixedPoint, encodeState
+├── ValidState.lean   — ±1 arithmetic lemmas, preservation under updates, encoding injectivity
+├── Energy.lean       — energy_diff identity, energy_descent (Theorem 1)
+├── FixedPoint.lean   — fixed_point_iff (Theorem 2)
+└── Convergence.lean  — convergence / no infinite descent (Theorem 3)
+Hopfield.lean         — Root module importing all five
 ```
 
-## Planned theorem inventory
+## Definitions
 
-### Layer 1 — Foundations
+- **States:** `Fin N → ℝ` with `ValidState s` requiring each `s i ∈ {-1, +1}`
+- **Weight matrix:** `Matrix (Fin N) (Fin N) ℝ` with `W.IsSymm` and `∀ i, W i i = 0`
+- **Energy:** E(s) = -(1/2) Σᵢⱼ sᵢ Wᵢⱼ sⱼ + Σᵢ θᵢ sᵢ
+- **Local field:** hᵢ = Σⱼ Wᵢⱼ sⱼ − θᵢ
+- **Async update:** sets sᵢ to +1 if hᵢ > 0, −1 if hᵢ < 0, preserves sᵢ on ties
 
-| # | Theorem | Statement |
-|---|---------|-----------|
-| 1 | `hopfieldEnergy_def` | E(s) = -1/2 sᵀ W s + θᵀ s |
-| 2 | `weights_symmetric` | Weight matrix symmetry hypothesis |
-| 3 | `weights_zero_diagonal` | W i i = 0 for all i |
-| 4 | `energy_bounded_below` | E(s) is bounded below over the finite state space |
+## Theorem inventory
 
-### Layer 2 — Descent and Fixed Points
+### Layer 1 — Energy mechanics
 
-| # | Theorem | Statement |
-|---|---------|-----------|
-| 5 | `energy_nonincreasing_async_update` | Single-unit async flip: E(s') ≤ E(s) |
-| 6 | `energy_strict_decrease_iff` | Flip strictly decreases energy iff the unit changes state |
-| 7 | `fixed_point_iff_no_decrease` | s is a fixed point iff no flip decreases energy |
-| 8 | `fixed_point_local_field_sign` | At a fixed point, the local field has consistent sign with state |
+| # | Name | Statement |
+|---|------|-----------|
+| 1 | `energy_diff` | ΔE = -(s'ᵢ − sᵢ) · hᵢ for single-unit modifications |
+| 2 | `quadratic_diff` | Quadratic form change under single-unit update (uses symmetry + zero diagonal) |
+| 3 | `energy_flip_eq` | Flip energy change = 2·sᵢ·hᵢ |
 
-### Layer 3 — Convergence
+### Layer 2 — Main theorems
 
-| # | Theorem | Statement |
-|---|---------|-----------|
-| 9  | `energy_sequence_nonincreasing` | Energy sequence is non-increasing under repeated updates |
-| 10 | `convergence_to_fixed_point` | Asynchronous updates terminate at a fixed-point attractor |
+| # | Name | Statement |
+|---|------|-----------|
+| 4 | `energy_descent` | energy W θ (asyncUpdate W θ s i) ≤ energy W θ s |
+| 5 | `energy_strict_descent` | State changes implies strict energy decrease |
+| 6 | `fixed_point_iff` | IsFixedPoint W θ s ↔ ∀ i, energy W θ s ≤ energy W θ (flipUnit s i) |
+| 7 | `convergence` | No infinite sequence of state-changing async updates exists |
 
 ## Key technical highlights
 
-- Convergence proof uses no ODE or LaSalle machinery -- finite state space + bounded energy closes it directly
-- Works over `Fin N → ℝ` with states in `{-1, +1}`, weight matrix `Matrix (Fin N) (Fin N) ℝ`
+- `convergence` encodes valid states as `Fin N → Bool` and uses pigeonhole: strict energy decrease implies injectivity of the state sequence, which contradicts injection into a finite type
+- No ODE machinery, no LaSalle, no Barbalat -- the finite state space closes it directly
+- `energy_diff` master identity cleanly separates linear and quadratic terms
 - Standard axioms only: `propext`, `Classical.choice`, `Quot.sound`
 - Zero `sorry`, zero `admit`
 
@@ -91,8 +84,9 @@ Then import:
 
 ```lean
 import Hopfield.Convergence  -- attractor convergence
-import Hopfield.Descent      -- energy descent lemma
-import Hopfield.FixedPoints  -- fixed point characterisation
+import Hopfield.FixedPoint   -- fixed point characterisation
+import Hopfield.Energy       -- energy descent
+import Hopfield.ValidState   -- state arithmetic
 import Hopfield.Defs         -- core definitions
 ```
 
@@ -106,9 +100,11 @@ Zenodo DOI forthcoming.
 
 ## Related work
 
-- [kuramoto-lean](https://github.com/velvetmonkey/kuramoto-lean) — Lean 4 formalisation of Kuramoto synchronisation. Zenodo: https://doi.org/10.5281/zenodo.20468619
+- [kuramoto-lean](https://github.com/velvetmonkey/kuramoto-lean) — Lean 4 Kuramoto synchronisation. Zenodo: https://doi.org/10.5281/zenodo.20468619
 - [gradient-descent-lean](https://github.com/velvetmonkey/gradient-descent-lean) — Lean 4 gradient descent convergence. Zenodo: https://doi.org/10.5281/zenodo.20472996
-- [flywheel-universe](https://zenodo.org/doi/10.5281/zenodo.20469680) — Budgeted Hebbian Kuramoto dynamics companion paper
+- [contraction-lean](https://github.com/velvetmonkey/contraction-lean) — Lean 4 contraction theory
+- [lotka-volterra-lean](https://github.com/velvetmonkey/lotka-volterra-lean) — Lean 4 Lotka-Volterra Hamiltonian conservation
+- [nesterov-lean](https://github.com/velvetmonkey/nesterov-lean) — Lean 4 Nesterov accelerated gradient descent
 
 ## Acknowledgements
 
