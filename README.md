@@ -3,7 +3,7 @@
 [![Lean 4](https://img.shields.io/badge/Lean-4.28.0-blue)](https://lean-lang.org/)
 [![Mathlib](https://img.shields.io/badge/Mathlib-v4.28.0-purple)](https://github.com/leanprover-community/mathlib4)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Proofs](https://img.shields.io/badge/proofs-3%20theorems%20%2F%200%20sorry-brightgreen)](Hopfield)
+[![Proofs](https://img.shields.io/badge/proofs-7%20theorems%20%2F%200%20sorry-brightgreen)](Hopfield)
 [![Paper](https://img.shields.io/badge/Zenodo-20474169-blue)](https://zenodo.org/records/20474169)
 
 Lean 4 formal proofs of Hopfield network energy descent and attractor convergence.
