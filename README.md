@@ -1,5 +1,6 @@
 # hopfield-lean
 
+[![thread](https://img.shields.io/badge/%F0%9F%A7%B5-how%20it%20works-1DA1F2)](https://x.com/thevelvetmonke)
 [![Lean 4](https://img.shields.io/badge/Lean-4.28.0-blue)](https://lean-lang.org/)
 [![Mathlib](https://img.shields.io/badge/Mathlib-v4.28.0-purple)](https://github.com/leanprover-community/mathlib4)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
@@ -10,7 +11,15 @@ Lean 4 formal proofs of Hopfield network energy descent and attractor convergenc
 
 **Zero sorry statements.** Discrete Hopfield networks over finite state spaces.
 
-## Why it matters
+## What this is, and why it matters
+
+This library formalizes energy descent for a finite asynchronous Hopfield network. Its headline theorem, `Hopfield.convergence`, proves that there cannot be an infinite sequence of valid asynchronous updates in which every update changes the network state.
+
+The proof combines dynamics with a finite-state argument. Symmetry and a zero diagonal give an exact energy-change identity, and any update that changes a valid `+/-1` state strictly decreases energy. The resulting state sequence would be injective, which is impossible because valid states encode into the finite Boolean state space.
+
+The theorem rules out infinite all-changing runs under the stated update rule. It does not certify convergence to a global energy minimum, capacity or recall quality, learning of the weights, or a scheduler fairness property. In particular, turning the no-infinite-change statement into a scheduler-specific fixed-point guarantee requires the appropriate scheduling argument.
+
+## Background and motivation
 
 Hopfield networks are among the oldest and most studied models of associative memory. Their convergence guarantee -- that asynchronous updates always decrease a Lyapunov energy function and therefore terminate at a fixed-point attractor -- is a foundational result connecting neural dynamics, statistical physics, and optimisation.
 
